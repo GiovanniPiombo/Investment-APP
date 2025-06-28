@@ -1,0 +1,118 @@
+QWidget {
+    background-color: #121212;
+    color: #E0E0E0;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 15px;
+}
+
+QLabel#main_title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #BB86FC;
+    margin-bottom: 20px;
+}
+
+QLabel {
+    color: #E0E0E0;
+}
+
+QPushButton {
+    background-color: #1F1F1F;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    font-weight: bold;
+}
+QPushButton:hover {
+    background-color: #333;
+}
+QPushButton:pressed {
+    background-color: #444;
+}
+
+QLineEdit {
+    background-color: #1E1E1E;
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 6px 10px;
+    color: #FFFFFF;
+}
+
+QVBoxLayout, QHBoxLayout {
+    margin: 10px;
+    spacing: 10px;
+}
+
+QStackedLayout {
+    background-color: transparent;
+}
+
+QSpacerItem {
+    height: 10px;
+}
+
+QPushButton#home_button, QPushButton#settings_button {
+    text-align: left;
+    padding-left: 20px;
+}
+
+QScrollBar:vertical {
+    background: #222;
+    width: 12px;
+    margin: 0px;
+}
+QScrollBar::handle:vertical {
+    background: #555;
+    border-radius: 6px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #777;
+}
+
+/* === HOMEPAGE === */
+QLabel#home_title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #BB86FC;
+    margin-bottom: 20px;
+}
+
+QLabel#home_details {
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    background-color: #1A1A1A;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    color: #E0E0E0;
+    line-height: 1.5;
+}
+
+QLabel#settings_title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #BB86FC;
+    margin-bottom: 20px;
+}
+
+QLabel#portfolio_title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #BB86FC;
+    margin-bottom: 20px;
+}
+
+QLabel#home_instructions {
+    color: #E0E0E0;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 20px;
+    margin: 10px;
+    border: 1px solid palette(midlight);
+    border-radius: 8px;
+    background-color: palette(window);
+    text-align: center;
+    border-color: #444;
+    background-color: #2d2d2d;
+}
