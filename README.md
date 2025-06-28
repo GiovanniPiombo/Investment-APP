@@ -23,7 +23,7 @@
 project/
 ├── assets/
 │   ├── white.qss               # Stylesheet for light theme
-│   └── dark.qss                # Stylesheet for light theme
+│   └── dark.qss                # Stylesheet for dark theme
 ├── core/
 │   └── finance.py              # Core financial logic
 ├── ui/
