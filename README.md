@@ -37,13 +37,20 @@ project/
 
 ## 🛠️ How to Run
 
-1️⃣ Install the dependencies:
+1️⃣ Clone the repository:
+
+```bash
+git clone https://github.com/GiovanniPiombo/Investment-APP.git
+cd Investment-APP
+```
+
+2️⃣ Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2️⃣ Run the application:
+3️⃣ Run the application:
 
 ```bash
 python main.py
