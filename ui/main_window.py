@@ -70,6 +70,3 @@ class MainWindow(QWidget):
                         self.homepage.chart.change_theme(theme_name)
         except FileNotFoundError:
             print("Warning: QSS file not found at", f"assets/{theme_name}.qss")
-                app = QApplication.instance()
-                if app:
-                    app.setStyleSheet(stylesheet)
