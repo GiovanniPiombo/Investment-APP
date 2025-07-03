@@ -51,3 +51,27 @@ class Finance():
     
     def get_results(self):
         return self.investment
+    
+    def get_annual_breakdown(self):
+        r = self.investment["rate"] / 100
+        n = self.compound
+        m = self.contribution
+        t = self.investment["years"]
+        P = self.investment["initial_deposit"]
+        PMT = self.investment["contribution_amount"]
+
+        years = list(range(int(t) + 1))
+        capital = []
+
+        for year in years:
+            if r == 0:
+                initial = P
+                contribution = PMT * m * year
+            else:
+                initial = P * ((1 + r/n) ** (n * year))
+                contribution = PMT * (((1 + r/n) ** (n * year) - 1) / (r/n)) * (n/m)
+
+            total = initial + contribution
+            capital.append(total)
+
+        return years, capital
