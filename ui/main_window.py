@@ -73,5 +73,3 @@ class MainWindow(QWidget):
                 app = QApplication.instance()
                 if app:
                     app.setStyleSheet(stylesheet)
-        except FileNotFoundError:
-            print("Warning: QSS file not found at", f"themes/{theme_name}.qss")
