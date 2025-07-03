@@ -37,13 +37,13 @@ class MainWindow(QWidget):
         self.portfolio = Portfolio()
         self.portfolio_scroll = QScrollArea()
         self.portfolio_scroll.setWidget(self.portfolio)
-        self.portfolio_scroll.setWidgetResizable(True)  # questo è fondamentale!
+        self.portfolio_scroll.setWidgetResizable(True)
         self.portfolio_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.homepage = Homepage()
         self.settings = Settings()
-        self.pages.addWidget(self.homepage)                 #Index = 0
-        self.pages.addWidget(self.portfolio_scroll)         #Index = 1
-        self.pages.addWidget(self.settings)                 #Index = 2
+        self.pages.addWidget(self.homepage)                 
+        self.pages.addWidget(self.portfolio_scroll)         
+        self.pages.addWidget(self.settings)                 
         self.horizontal_layout.addLayout(self.pages)
 
     def controller(self):
@@ -51,17 +51,25 @@ class MainWindow(QWidget):
         self.portfolio_button.clicked.connect(lambda: self.pages.setCurrentIndex(1))
         self.settings_button.clicked.connect(lambda: self.pages.setCurrentIndex(2))
         self.settings.theme_changed.connect(self.apply_theme)
-        self.portfolio.investment_saved.connect(self.sendupdate) # self.homepage.update_investment
+        self.portfolio.investment_saved.connect(self.sendupdate)
 
     def sendupdate(self, investment):
         finance = Finance(investment)
         results = finance.get_results()
-        self.homepage.update_investment(results)
+        years, capital = finance.get_annual_breakdown()
+        self.homepage.update_investment(results, years, capital)
 
     def apply_theme(self, theme_name):
         try:
             with open(f"assets/{theme_name}.qss", "r") as file:
                 stylesheet = file.read()
+                app = QApplication.instance()
+                if app:
+                    app.setStyleSheet(stylesheet)
+                    if hasattr(self.homepage, 'chart') and self.homepage.chart is not None:
+                        self.homepage.chart.change_theme(theme_name)
+        except FileNotFoundError:
+            print("Warning: QSS file not found at", f"assets/{theme_name}.qss")
                 app = QApplication.instance()
                 if app:
                     app.setStyleSheet(stylesheet)
