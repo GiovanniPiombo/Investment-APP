@@ -33,16 +33,18 @@ class Finance():
         t = self.investment["years"]
         P = self.investment["initial_deposit"]
         PMT = self.investment["contribution_amount"]
-        invested = PMT * self.contribution + P
+        
+        invested = P + PMT * m * t
 
         if r == 0:
-            initial_capital_results = P
-            contribution_results = PMT * m * t
+            final_capital = P + PMT * m * t
         else:
-            initial_capital_results = P * ((1 + r/n) ** (n * t))
-            contribution_results = PMT * (((1 + r/n) ** (n * t) - 1) / (r/n)) * (n/m)
+            initial_capital_results = P * (1 + r/n)**(n*t)
+            effective_rate_per_contribution = (1 + r/n)**(n/m) - 1
+            contribution_results = PMT * ((1 + effective_rate_per_contribution)**(m*t) - 1) / effective_rate_per_contribution
+            
+            final_capital = initial_capital_results + contribution_results
 
-        final_capital = initial_capital_results + contribution_results
         self.investment.update({
             "final_capital" : final_capital,
             "profit" : final_capital - invested,
@@ -65,13 +67,15 @@ class Finance():
 
         for year in years:
             if r == 0:
-                initial = P
-                contribution = PMT * m * year
+                total = P + PMT * m * year
             else:
-                initial = P * ((1 + r/n) ** (n * year))
-                contribution = PMT * (((1 + r/n) ** (n * year) - 1) / (r/n)) * (n/m)
+                initial = P * (1 + r/n)**(n*year)
+                
+                effective_rate_per_contribution = (1 + r/n)**(n/m) - 1
+                contribution = PMT * ((1 + effective_rate_per_contribution)**(m*year) - 1) / effective_rate_per_contribution
+                
+                total = initial + contribution
 
-            total = initial + contribution
             capital.append(total)
 
         return years, capital
