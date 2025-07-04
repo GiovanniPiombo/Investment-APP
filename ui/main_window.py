@@ -3,6 +3,32 @@ from ui.homepage import Homepage
 from ui.portfolio import Portfolio
 from ui.settings import Settings
 from core.finance import Finance
+import os
+import sys
+
+def get_resource_path(relative_path):
+    """Cerca le risorse in:
+    - `_MEIPASS` (se eseguibile PyInstaller)
+    - Cartella dello script (sviluppo)
+    - Cartella del progetto (fallback)
+    """
+    # PyInstaller
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(script_dir)
+        base_path = project_root
+    
+    full_path = os.path.join(base_path, relative_path)
+    
+    if not os.path.exists(full_path):
+        script_dir_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+        if os.path.exists(script_dir_path):
+            return script_dir_path
+    
+    return full_path
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -61,12 +87,17 @@ class MainWindow(QWidget):
 
     def apply_theme(self, theme_name):
         try:
-            with open(f"assets/{theme_name}.qss", "r") as file:
-                stylesheet = file.read()
-                app = QApplication.instance()
-                if app:
-                    app.setStyleSheet(stylesheet)
-                    if hasattr(self.homepage, 'chart') and self.homepage.chart is not None:
-                        self.homepage.chart.change_theme(theme_name)
-        except FileNotFoundError:
-            print("Warning: QSS file not found at", f"assets/{theme_name}.qss")
+        # Usa il percorso corretto per le risorse
+            qss_path = get_resource_path(f"assets/{theme_name}.qss")
+            if os.path.exists(qss_path):
+                with open(qss_path, "r") as file:
+                    stylesheet = file.read()
+                    app = QApplication.instance()
+                    if app:
+                        app.setStyleSheet(stylesheet)
+                        if hasattr(self.homepage, 'chart') and self.homepage.chart is not None:
+                            self.homepage.chart.change_theme(theme_name)
+            else:
+                print(f"Warning: QSS file not found at {qss_path}")
+        except Exception as e:
+            print(f"Error applying theme: {e}")
