@@ -113,6 +113,16 @@ The setup includes the icon and all required assets.
 
 ---
 
+## 📝 TODO Ticker Integration Phase
+
+- [ ] **Add Advanced Section to Portfolio Page**  
+  Implement an advanced area where users can input **stock tickers**.  
+  - Allow input of **individual stock tickers** (e.g., AAPL, TSLA)  
+  - Fetch **historical price data** using `yfinance`  
+  - Calculate **percentage return** over a selected time period  
+  - Integrate this data into the portfolio logic  
+  - Display results
+
 ## 📌 Notes
 
 - The Windows installer requires no Python installation.
