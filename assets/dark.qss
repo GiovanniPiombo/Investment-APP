@@ -12,6 +12,20 @@ QLabel#main_title {
     margin-bottom: 20px;
 }
 
+QLabel#advanced_title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #BB86FC;
+    margin-bottom: 20px;
+}
+
+QLabel#advanced_details {
+    font-size: 18px;
+    font-weight: bold;
+    color: #BB86FC;
+    margin-bottom: 20px;
+}
+
 QLabel {
     color: #E0E0E0;
 }
@@ -70,7 +84,6 @@ QScrollBar::handle:vertical:hover {
     background: #777;
 }
 
-/* === HOMEPAGE === */
 QLabel#home_title {
     font-size: 22px;
     font-weight: bold;
@@ -115,4 +128,13 @@ QLabel#home_instructions {
     text-align: center;
     border-color: #444;
     background-color: #2d2d2d;
+}
+
+#InvestmentCard {
+    background-color: #1E1E1E;
+    border: 1px solid #444;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
