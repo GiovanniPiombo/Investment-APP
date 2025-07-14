@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedLayout, QPushButton, QSpacerItem, QSizePolicy, QLineEdit, QLabel, QHBoxLayout, QComboBox
 from PySide6.QtCore import Signal
+
 class Portfolio(QWidget):
     investment_saved = Signal(dict)
     def __init__(self):

@@ -2,17 +2,12 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedLayout, QPushButton,
 from ui.homepage import Homepage
 from ui.portfolio import Portfolio
 from ui.settings import Settings
+from ui.advanced import Advanced
 from core.finance import Finance
 import os
 import sys
 
 def get_resource_path(relative_path):
-    """Cerca le risorse in:
-    - `_MEIPASS` (se eseguibile PyInstaller)
-    - Cartella dello script (sviluppo)
-    - Cartella del progetto (fallback)
-    """
-    # PyInstaller
     if hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
     else:
@@ -29,9 +24,9 @@ def get_resource_path(relative_path):
     
     return full_path
 
-
 class MainWindow(QWidget):
     def __init__(self):
+        self.mode = "default"
         super().__init__()
         self.create_interface()
         self.controller()
@@ -67,17 +62,27 @@ class MainWindow(QWidget):
         self.portfolio_scroll.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.homepage = Homepage()
         self.settings = Settings()
+        self.advanced = Advanced()
         self.pages.addWidget(self.homepage)                 
         self.pages.addWidget(self.portfolio_scroll)         
-        self.pages.addWidget(self.settings)                 
+        self.pages.addWidget(self.settings)
+        self.pages.addWidget(self.advanced)               
         self.horizontal_layout.addLayout(self.pages)
 
     def controller(self):
         self.home_button.clicked.connect(lambda: self.pages.setCurrentIndex(0))
         self.portfolio_button.clicked.connect(lambda: self.pages.setCurrentIndex(1))
         self.settings_button.clicked.connect(lambda: self.pages.setCurrentIndex(2))
+        self.settings.mode_changed.connect(self.change_mode)
         self.settings.theme_changed.connect(self.apply_theme)
         self.portfolio.investment_saved.connect(self.sendupdate)
+        print(self.mode)
+
+    def change_mode(self, mode):
+        if mode == "default":
+            self.portfolio_button.clicked.connect(lambda: self.pages.setCurrentIndex(1))
+        elif mode == "advanced":
+            self.portfolio_button.clicked.connect(lambda: self.pages.setCurrentIndex(3))
 
     def sendupdate(self, investment):
         finance = Finance(investment)
@@ -87,7 +92,6 @@ class MainWindow(QWidget):
 
     def apply_theme(self, theme_name):
         try:
-        # Usa il percorso corretto per le risorse
             qss_path = get_resource_path(f"assets/{theme_name}.qss")
             if os.path.exists(qss_path):
                 with open(qss_path, "r") as file:

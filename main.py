@@ -5,12 +5,6 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 
 def get_resource_path(relative_path):
-    """Cerca le risorse in:
-    - `_MEIPASS` (se eseguibile PyInstaller)
-    - Cartella dello script (sviluppo)
-    - Cartella del progetto (fallback)
-    """
-    # PyInstaller
     if hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
     else:
