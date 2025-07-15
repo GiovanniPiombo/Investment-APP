@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QHBoxLayout
-
+from core.ticker_analyzer import TickerAnalyzer
 class Investment(QWidget):
     def __init__(self, remove_callback=None):
         super().__init__()
@@ -34,3 +34,15 @@ class Investment(QWidget):
         self.main_layout.addWidget(QLabel("Contribution Amount"))
         self.contribution = QLineEdit()
         self.main_layout.addWidget(self.contribution)
+
+    def get_data(self, compound_freq, contrib_freq, years):
+        rate = TickerAnalyzer.get_rate(self.ticker.text())
+        return {
+        "ticker": self.ticker.text(),
+        "rate": rate,
+        "initial_deposit": self.initial_deposit.text(),
+        "contribution_amount": self.contribution.text(),
+        "compound_frequency": compound_freq,
+        "contribution_frequency": contrib_freq,
+        "years": years
+        }

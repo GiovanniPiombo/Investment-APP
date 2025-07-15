@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QApplication, QVBoxLayout, QLabel, QPushButton, QComboBox, QScrollArea
+from PySide6.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QPushButton, QComboBox, QScrollArea
 import sys
 from ui.investment import Investment
 
@@ -35,6 +35,10 @@ class Advanced(QWidget):
         self.contribution_frequency.addItems(["Monthly", "Quarterly", "Semiannually", "Annually"])
         self.main_layout.addWidget(self.contribution_frequency)
 
+        self.main_layout.addWidget(QLabel("Years Of Growth"))
+        self.years = QLineEdit()
+        self.main_layout.addWidget(self.years)
+
         self.addinvestment_button = QPushButton("Add Investment")
         self.main_layout.addWidget(self.addinvestment_button)
 
@@ -43,6 +47,7 @@ class Advanced(QWidget):
 
     def controller(self):
         self.addinvestment_button.clicked.connect(self.add)
+        self.save_button.clicked.connect(self.save_investments)
 
     def add(self):
         investment = Investment(remove_callback=self.remove_investment)
@@ -53,9 +58,18 @@ class Advanced(QWidget):
         widget.setParent(None)
         widget.deleteLater()
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Advanced()
-    window.resize(400, 500)
-    window.show()
-    sys.exit(app.exec())
+    def get_investments_data(self):
+        investments_data = []
+        compound_freq = self.frequency.currentText()
+        contrib_freq = self.contribution_frequency.currentText()
+        years = self.years.text()
+    
+        for i in range(self.scroll_layout.count()):
+            widget = self.scroll_layout.itemAt(i).widget()
+            if isinstance(widget, Investment):
+                investments_data.append(widget.get_data(compound_freq, contrib_freq, years))
+        return investments_data
+
+    def save_investments(self):
+        investments_data = self.get_investments_data()
+        print("Dati degli investimenti:", investments_data) #Test
