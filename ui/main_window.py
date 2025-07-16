@@ -76,7 +76,7 @@ class MainWindow(QWidget):
         self.settings.mode_changed.connect(self.change_mode)
         self.settings.theme_changed.connect(self.apply_theme)
         self.portfolio.investment_saved.connect(self.sendupdate)
-        print(self.mode)
+        self.advanced.investment_saved.connect(self.sendupdate)
 
     def change_mode(self, mode):
         if mode == "default":

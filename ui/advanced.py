@@ -1,8 +1,9 @@
 from PySide6.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QPushButton, QComboBox, QScrollArea
-import sys
+from PySide6.QtCore import Signal
 from ui.investment import Investment
 
 class Advanced(QWidget):
+    investment_saved = Signal(dict)
     def __init__(self):
         super().__init__()
         self.setup()
@@ -15,6 +16,10 @@ class Advanced(QWidget):
         self.title = QLabel("Advanced Settings")
         self.title.setObjectName("advanced_title")
         self.main_layout.addWidget(self.title)
+
+        self.main_layout.addWidget(QLabel("Years Of Growth"))
+        self.years = QLineEdit()
+        self.main_layout.addWidget(self.years)
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
@@ -34,10 +39,6 @@ class Advanced(QWidget):
         self.contribution_frequency = QComboBox()
         self.contribution_frequency.addItems(["Monthly", "Quarterly", "Semiannually", "Annually"])
         self.main_layout.addWidget(self.contribution_frequency)
-
-        self.main_layout.addWidget(QLabel("Years Of Growth"))
-        self.years = QLineEdit()
-        self.main_layout.addWidget(self.years)
 
         self.addinvestment_button = QPushButton("Add Investment")
         self.main_layout.addWidget(self.addinvestment_button)
@@ -72,4 +73,59 @@ class Advanced(QWidget):
 
     def save_investments(self):
         investments_data = self.get_investments_data()
-        print("Dati degli investimenti:", investments_data) #Test
+    
+        if not investments_data:
+            return None
+    
+        total_initial_deposit = 0.0
+        total_contribution = 0.0
+        weighted_rate_sum = 0.0
+        total_weight = 0.0
+    
+        try:
+            years = float(self.years.text())
+        except ValueError:
+            print("Invalid years value")
+            return None
+        
+        if(self.contribution_frequency.currentText() == "Monthly"):
+            freq = 12
+        elif(self.contribution_frequency.currentText() == "Quarterly"):
+            freq = 4
+        elif(self.contribution_frequency.currentText() == "Semiannually"):
+            freq = 2
+        else:
+            freq = 1
+        
+        for investment in investments_data:
+            try:
+                initial = float(investment["initial_deposit"])
+                contrib = float(investment["contribution_amount"])
+                rate = float(investment["rate"])
+            
+                total_initial_deposit += initial
+                total_contribution += contrib
+            
+                weight = initial + (contrib * freq * years)
+                weighted_rate_sum += rate * weight
+                total_weight += weight
+            
+            except (ValueError, KeyError) as e:
+                print(f"Error processing investment data: {e}")
+                continue
+    
+        if total_weight > 0:
+            weighted_avg_rate = weighted_rate_sum / total_weight
+        else:
+            weighted_avg_rate = 0.0
+    
+        result = {
+            "rate": weighted_avg_rate,
+            "initial_deposit": total_initial_deposit,
+            "contribution_amount": total_contribution,
+            "compound_frequency": self.frequency.currentText(),
+            "contribution_frequency": self.contribution_frequency.currentText(),
+            "years": years,
+            "is_empty": False
+        }
+        self.investment_saved.emit(result)
