@@ -9,6 +9,12 @@
 - 📊 **Portfolio Input**  
   Enter your initial deposit, interest rate, contribution frequency, and other key parameters.
 
+- 🧠 **Advanced Ticker-Based Simulation**  
+  Input multiple **stock tickers** (e.g., AAPL, TSLA) and calculate their **historical CAGR** based on real market data:
+  - Automatically fetches data from **Yahoo Finance**
+  - Computes average annual return (CAGR) from 2020 to 2025
+  - Supports weighted average across multiple tickers
+
 - 🏠 **Homepage Summary**  
   Get a detailed breakdown of your investment projection and total returns.
 
@@ -47,12 +53,15 @@ project/
 │   ├── dark.qss                # Stylesheet for dark theme
 │   └── icon.ico                # Custom app icon
 ├── core/
+│   ├── ticker_analyzer.py      # Ticker CAGR
 │   └── finance.py              # Core financial logic
 ├── ui/
 │   ├── chart.py                # Chart Settings
 │   ├── homepage.py             # Homepage summary page
 │   ├── main_window.py          # Main application window
 │   ├── portfolio.py            # Portfolio input form
+│   ├── advanced.py             # Advanced page with multi-ticker input
+│   ├── investment.py           # Individual investment input widget
 │   └── settings.py             # Theme and app settings
 ├── main.py                     # App entry point
 ├── README.md                   # This file
@@ -110,18 +119,17 @@ The setup includes the icon and all required assets.
 - Interactive investment growth chart with zoom/pan controls
 - App icon integration  
 - PyInstaller `.exe` build and Windows setup
+- Advanced investment page with real-time ticker analysis (CAGR)
 
 ---
 
-## 📝 TODO Ticker Integration Phase
+## 📝 TODO
 
-- [ ] **Add Advanced Section to Portfolio Page**  
-  Implement an advanced area where users can input **stock tickers**.  
-  - Allow input of **individual stock tickers** (e.g., AAPL, TSLA)  
-  - Fetch **historical price data** using `yfinance`  
-  - Calculate **percentage return** over a selected time period  
-  - Integrate this data into the portfolio logic  
-  - Display results
+- [ ] **Improve error handling in TickerAnalyzer**  
+  Gracefully handle invalid or unavailable tickers with user-friendly feedback.
+
+- [ ] **Add unit testing with pytest**  
+  Introduce automated tests for financial logic and ticker analysis using `pytest`.
 
 ## 📌 Notes
 
