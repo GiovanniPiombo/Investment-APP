@@ -41,35 +41,52 @@ class Portfolio(QWidget):
         self.save_button = QPushButton("Save")
         self.settings_layout.addWidget(self.save_button)
         self.message = QLabel("")
+        self.warning = QLabel("")
         self.settings_layout.addWidget(self.message)
+        self.settings_layout.addWidget(self.warning)
         self.setLayout(self.settings_layout)
         
     def controller(self):
         self.save_button.clicked.connect(self.save_investment)
 
     def save_investment(self):
+        self.warning.setText("")
         is_ok = True
 
         try:
             initial_deposit = float(self.initial_deposit.text())
+            if initial_deposit < 0:
+                is_ok = False
+                self.error_message("Initial Deposit cannot be negative!")
         except ValueError:
             is_ok = False
             self.error_message("Initial Deposit!")
 
         try:
             years = float(self.years.text())
+            if years < 0:
+                is_ok = False
+                self.error_message("Years Of Growth cannot be negative!")
         except ValueError:
             is_ok = False
             self.error_message("Years Of Growth!")
 
         try:
             rate = float(self.rate.text())
+            if rate < 0:
+                self.warning_message("negative interest rate will cause loss!")
+            elif rate > 100:
+                self.warning_message("unrealistic interest rate!")
+
         except ValueError:
             is_ok = False
             self.error_message("Interest Rate!")
 
         try:
             contribution = float(self.contribution.text())
+            if contribution < 0:
+                is_ok = False
+                self.error_message("Contribution Amount cannot be negative!")
         except ValueError:
             is_ok = False
             self.error_message("Contribution Amount!")
@@ -89,5 +106,9 @@ class Portfolio(QWidget):
             self.investment_saved.emit(self.investment)
     
     def error_message(self, text):
-        self.message.setText("Invalid " + text)
+        self.message.setText("Error : " + text)
         self.message.setStyleSheet("color : red")
+
+    def warning_message(self, text):
+        self.warning.setText("Warning : " + text)
+        self.warning.setStyleSheet("color : orange")
