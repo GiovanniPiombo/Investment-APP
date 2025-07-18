@@ -1,46 +1,46 @@
 # 💼 Investment App
 
-**Investment App** is a desktop application built with **PySide6** that helps users simulate and track the growth of their investments over time. The app features a clean and intuitive interface, with modular pages for portfolio input, settings, and a homepage summary.
+**Investment App** is a desktop application built with **PySide6** that allows users to simulate and track the growth of their investments over time. It features a clean and intuitive interface with modular pages for portfolio input, advanced simulations, and a summary dashboard.
 
 ---
 
 ## 🚀 Features
 
 - 📊 **Portfolio Input**  
-  Enter your initial deposit, interest rate, contribution frequency, and other key parameters.
+  Enter initial deposit, interest rate, contribution frequency, and other key parameters.
 
 - 🧠 **Advanced Ticker-Based Simulation**  
-  Input multiple **stock tickers** (e.g., AAPL, TSLA) and calculate their **historical CAGR** based on real market data:
-  - Automatically fetches data from **Yahoo Finance**
-  - Computes average annual return (CAGR) from 2020 to 2025
+  Analyze multiple **stock tickers** (e.g., AAPL, TSLA) with automatic data fetching from **Yahoo Finance**:
+  - Calculates **historical CAGR** (2020–2025)
   - Supports weighted average across multiple tickers
+  - Gracefully handles invalid or unavailable tickers
 
 - 🏠 **Homepage Summary**  
-  Get a detailed breakdown of your investment projection and total returns.
+  View a detailed breakdown of your investment projections and total returns.
 
 - 📈 **Interactive Growth Chart**  
   Visual comparison between:
-  - Compounded investment growth  
-  - Total amount invested (linear)  
-  - Theme-aware chart styling (light/dark)
+  - Compound growth  
+  - Linear total investment  
+  - Light/dark theme-aware design
 
 - 🎚️ **Chart Controls**  
   - Mouse wheel: Zoom  
   - Click + drag: Pan  
   - Double-click: Reset view  
-  - Rubber-band selection: Zoom to area
+  - Rubber-band: Zoom to selected area
 
 - ⚙️ **Theme Settings**  
   Easily switch between light and dark modes using `.qss` stylesheets.
 
 - 🧩 **Modular Architecture**  
-  Organized by components with clear signal-slot communication.
+  Component-based structure with clear signal-slot communication.
 
 - 🖼️ **Custom App Icon**  
-  Includes a personalized app icon (`icon.ico`) for a polished desktop experience.
+  Includes a personalized `icon.ico` for a polished experience.
 
 - 💾 **Windows Setup (.exe)**  
-  The app can be installed via a standalone Windows setup file — no Python installation required.
+  The app can be installed as a standalone Windows executable — no Python installation required.
 
 ---
 
@@ -49,24 +49,27 @@
 ```
 project/
 ├── assets/
-│   ├── white.qss               # Stylesheet for light theme
-│   ├── dark.qss                # Stylesheet for dark theme
-│   └── icon.ico                # Custom app icon
+│   ├── white.qss                 # Light theme stylesheet
+│   ├── dark.qss                  # Dark theme stylesheet
+│   └── icon.ico                  # App icon
 ├── core/
-│   ├── ticker_analyzer.py      # Ticker CAGR
-│   └── finance.py              # Core financial logic
+│   ├── ticker_analyzer.py        # Ticker CAGR logic
+│   └── finance.py                # Core financial calculations
 ├── ui/
-│   ├── chart.py                # Chart Settings
-│   ├── homepage.py             # Homepage summary page
-│   ├── main_window.py          # Main application window
-│   ├── portfolio.py            # Portfolio input form
-│   ├── advanced.py             # Advanced page with multi-ticker input
-│   ├── investment.py           # Individual investment input widget
-│   └── settings.py             # Theme and app settings
-├── main.py                     # App entry point
-├── README.md                   # This file
-├── requirements.txt            # Requirements
-└── InvestmentApp.spec          # PyInstaller spec file for building .exe
+│   ├── chart.py                  # Investment growth chart
+│   ├── homepage.py               # Summary display
+│   ├── main_window.py            # Main app window
+│   ├── portfolio.py              # Portfolio input page
+│   ├── advanced.py               # Advanced multi-ticker input
+│   ├── investment.py             # Investment input component
+│   └── settings.py               # Theme and settings page
+├── tests/
+│   ├── test_finance.py           # Finance Test
+│   └── test_ticker_analyzer.py   # Ticker Analyzer Test
+├── main.py                       # App entry point
+├── README.md                     # This file
+├── requirements.txt              # Dependencies
+└── InvestmentApp.spec            # PyInstaller build config
 ```
 
 ---
@@ -86,7 +89,7 @@ cd Investment-APP
 pip install -r requirements.txt
 ```
 
-3️⃣ Run the application:
+3️⃣ Launch the application:
 
 ```bash
 python main.py
@@ -94,46 +97,38 @@ python main.py
 
 ---
 
-## 🧊 Windows Executable (Setup)
+## 🧊 Windows Executable
 
-A compiled Windows setup file is available for installation.
+A compiled Windows setup file is available.
 
-### 🔨 Build it yourself (optional):
+### 🔨 Build it yourself:
 
-If you want to build the `.exe` yourself, use:
+To build the `.exe` manually using PyInstaller:
 
 ```bash
 pyinstaller InvestmentApp.spec
 ```
 
-This will generate a distributable .exe file in the dist/ directory.
-
-The setup includes the icon and all required assets.
-
-## ✅ Completed
-
-- Portfolio input form with validation  
-- Theme switching using `.qss` stylesheets  
-- Investment summary display  
-- Signal-slot communication between components  
-- Interactive investment growth chart with zoom/pan controls
-- App icon integration  
-- PyInstaller `.exe` build and Windows setup
-- Advanced investment page with real-time ticker analysis (CAGR)
+The output will be available in the `dist/` directory and includes all necessary assets.
 
 ---
 
-## 📝 TODO
+## ✅ Completed Features
 
-- [ ] **Improve error handling in TickerAnalyzer**  
-  Gracefully handle invalid or unavailable tickers with user-friendly feedback.
+- Portfolio input with validation  
+- Investment summary and projection  
+- Theme switching via `.qss`  
+- Real-time CAGR from Yahoo Finance  
+- Error handling for invalid tickers  
+- Interactive chart with zoom and pan  
+- App icon integration  
+- One-click `.exe` build with PyInstaller
+- Unit testing with pytest
 
-- [ ] **Add unit testing with pytest**  
-  Introduce automated tests for financial logic and ticker analysis using `pytest`.
+---
 
 ## 📌 Notes
 
-- The Windows installer requires no Python installation.
-- Setup was created with PyInstaller and includes the custom icon.
-- This app is designed for educational and simulation purposes only.  
+- The Windows installer includes all dependencies — no Python required.
+- Designed for educational/simulation purposes.
 - Contributions and feedback are welcome!
