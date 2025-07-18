@@ -2,14 +2,17 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSpacerItem, QSizePo
 from PySide6.QtCore import Qt, Signal
 
 class Settings(QWidget):
+    """Widget to display and manage application settings"""
     theme_changed = Signal(str)
     mode_changed = Signal(str)
 
     def __init__(self):
+        """Initialize the Settings widget"""
         super().__init__()
         self.create_settings_page()
 
     def create_settings_page(self):
+        """Set up the UI components for the Settings widget"""
         self.settings_layout = QVBoxLayout()
         self.settings_layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.settings_layout)

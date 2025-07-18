@@ -3,12 +3,16 @@ from PySide6.QtCore import Qt
 from ui.chart import Chart
 
 class Homepage(QWidget):
+    """Widget to display the homepage with investment details and chart"""
+
     def __init__(self):
+        """Initialize the Homepage widget"""
         super().__init__()
         self.investment = {"is_empty": True}
         self.setup_ui()
 
     def setup_ui(self):
+        """Set up the UI components for the homepage"""
         self.home_layout = QVBoxLayout()
         self.home_layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.home_layout)
@@ -23,6 +27,7 @@ class Homepage(QWidget):
             self.create_homepage()
 
     def no_data(self):
+        """Display a message when no investment data is available"""
         self.message.setText("No Investment Data Found")
         instructions = QLabel(
             "👋 Start your investment journey!\n\n"
@@ -36,6 +41,7 @@ class Homepage(QWidget):
         self.home_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
     def calculate_invested_values(self, years):
+        """Calculate the invested values based on the investment data"""
         initial = self.investment['initial_deposit']
         contrib_amount = self.investment['contribution_amount']
         freq = self.investment['contribution_frequency']
@@ -56,6 +62,7 @@ class Homepage(QWidget):
         return invested_values
 
     def create_homepage(self):
+        """Create the homepage with investment details and chart"""
         self.clear_layout()
         self.message.setText("Investment Details")
         
@@ -86,6 +93,7 @@ class Homepage(QWidget):
         self.home_layout.addWidget(self.chart)
 
     def update_investment(self, new_investment, years, capital):
+        """Update the homepage with new investment data"""
         self.years = years
         self.capital = capital
         self.investment = new_investment
@@ -97,6 +105,7 @@ class Homepage(QWidget):
             self.no_data()
 
     def clear_layout(self):
+        """Clear the current layout of the homepage"""
         while self.home_layout.count():
             item = self.home_layout.takeAt(0)
             if item.widget():

@@ -4,6 +4,7 @@ from PySide6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 
 class ChartView(QChartView):
+    """Custom QChartView to handle zooming and panning"""
     def __init__(self, chart):
         super().__init__(chart)
         self.setRubberBand(QChartView.RectangleRubberBand)
@@ -12,6 +13,7 @@ class ChartView(QChartView):
         self.setRenderHint(QPainter.Antialiasing)
 
     def wheelEvent(self, event):
+        """Handle zooming with mouse wheel"""
         zoom_factor = 1.2
         if event.angleDelta().y() > 0:
             self.chart().zoom(zoom_factor)
@@ -19,10 +21,14 @@ class ChartView(QChartView):
             self.chart().zoom(1/zoom_factor)
 
     def mouseDoubleClickEvent(self, event):
+        """Reset zoom on double click"""
         self.chart().zoomReset()
 
 class Chart(QWidget):
+    """Widget to display investment growth chart"""
+
     def __init__(self, years, values, invested_values, theme="dark"):
+        """Initialize the Chart widget with investment data"""
         super().__init__()
         self.setFixedSize(600, 400)
         self.setObjectName("graphWidget")
@@ -66,6 +72,7 @@ class Chart(QWidget):
         self.setLayout(layout)
 
     def apply_theme(self):
+        """Apply the selected theme to the chart"""
         if self.theme == "dark":
             bg_color = QColor("#2d2d2d")
             text_color = QColor("#E0E0E0")
@@ -101,5 +108,6 @@ class Chart(QWidget):
         legend.setPen(QPen(grid_color))
 
     def change_theme(self, theme):
+        """Change the theme of the chart"""
         self.theme = theme
         self.apply_theme()

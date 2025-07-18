@@ -2,7 +2,10 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEd
 from core.ticker_analyzer import TickerAnalyzer
 
 class Investment(QWidget):
+    """Widget to display and manage individual investment details"""
+    
     def __init__(self, remove_callback=None):
+        """Initialize the Investment widget"""
         super().__init__()
         self.remove_callback = remove_callback
         self.setup()
@@ -10,6 +13,7 @@ class Investment(QWidget):
         self.setObjectName("InvestmentCard")
 
     def setup(self):
+        """Set up the UI components for the Investment widget"""
         self.main_layout = QVBoxLayout(self)
 
         header_layout = QHBoxLayout()

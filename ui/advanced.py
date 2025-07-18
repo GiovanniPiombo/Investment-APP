@@ -6,11 +6,13 @@ class Advanced(QWidget):
     investment_saved = Signal(dict)
     
     def __init__(self):
+        """Initialize the Advanced settings widget"""
         super().__init__()
         self.setup()
         self.controller()
         
     def setup(self):
+        """Set up the UI components for the Advanced settings"""
         self.main_layout = QVBoxLayout(self)
         self.setLayout(self.main_layout)
 
@@ -55,6 +57,7 @@ class Advanced(QWidget):
         self.main_layout.addWidget(self.save_button)
 
     def controller(self):
+        """Connect signals to their respective slots"""
         self.addinvestment_button.clicked.connect(self.add)
         self.save_button.clicked.connect(self.save_investments)
 
@@ -67,17 +70,20 @@ class Advanced(QWidget):
             self.message.setStyleSheet("color: green;")
 
     def add(self):
+        """Add a new investment widget to the scroll area"""
         investment = Investment(remove_callback=self.remove_investment)
         self.scroll_layout.addWidget(investment)
         self.show_message("Investment added successfully!")
 
     def remove_investment(self, widget):
+        """Remove an investment widget from the scroll area"""
         self.scroll_layout.removeWidget(widget)
         widget.setParent(None)
         widget.deleteLater()
         self.show_message("Investment removed successfully!")
 
     def get_investments_data(self):
+        """Collect and validate investment data from the widgets"""
         self.show_message("")  # Clear previous messages
         
         # Validate years input
@@ -112,6 +118,7 @@ class Advanced(QWidget):
         return investments_data, years
 
     def save_investments(self):
+        """Save the investments data and emit the signal"""
         result = self.get_investments_data()
         if result is None:
             return

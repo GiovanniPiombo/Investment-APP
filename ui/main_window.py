@@ -8,6 +8,7 @@ import os
 import sys
 
 def get_resource_path(relative_path):
+    """Get the absolute path to a resource, works for both development and PyInstaller"""
     if hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
     else:
@@ -25,6 +26,7 @@ def get_resource_path(relative_path):
     return full_path
 
 class MainWindow(QWidget):
+    """Main window for the Investment Application"""
     def __init__(self):
         self.mode = "default"
         super().__init__()
@@ -32,6 +34,7 @@ class MainWindow(QWidget):
         self.controller()
 
     def create_interface(self):
+        """Create the main interface of the application"""
         self.setWindowTitle("Investment APP")
         self.resize(1280,720)
         self.main_layout = QVBoxLayout()
@@ -70,6 +73,7 @@ class MainWindow(QWidget):
         self.horizontal_layout.addLayout(self.pages)
 
     def controller(self):
+        """Connect signals to their respective slots"""
         self.home_button.clicked.connect(lambda: self.pages.setCurrentIndex(0))
         self.portfolio_button.clicked.connect(lambda: self.pages.setCurrentIndex(1))
         self.settings_button.clicked.connect(lambda: self.pages.setCurrentIndex(2))
@@ -79,18 +83,21 @@ class MainWindow(QWidget):
         self.advanced.investment_saved.connect(self.sendupdate)
 
     def change_mode(self, mode):
+        """Change the mode of the application"""
         if mode == "default":
             self.portfolio_button.clicked.connect(lambda: self.pages.setCurrentIndex(1))
         elif mode == "advanced":
             self.portfolio_button.clicked.connect(lambda: self.pages.setCurrentIndex(3))
 
     def sendupdate(self, investment):
+        """Update the homepage with new investment data"""
         finance = Finance(investment)
         results = finance.get_results()
         years, capital = finance.get_annual_breakdown()
         self.homepage.update_investment(results, years, capital)
 
     def apply_theme(self, theme_name):
+        """Apply the selected theme to the application"""
         try:
             qss_path = get_resource_path(f"assets/{theme_name}.qss")
             if os.path.exists(qss_path):

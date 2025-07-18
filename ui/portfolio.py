@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedLayout, QPushButton,
 from PySide6.QtCore import Signal
 
 class Portfolio(QWidget):
+    """Widget to display and manage the investment portfolio"""
     investment_saved = Signal(dict)
     def __init__(self):
         super().__init__()
@@ -12,6 +13,7 @@ class Portfolio(QWidget):
         self.controller()
 
     def make_settings(self):
+        """Set up the UI components for the Portfolio widget"""
         self.settings_layout = QVBoxLayout()
         self.settings_layout.setContentsMargins(20, 20, 20, 20)
         self.settings_layout.setSpacing(10)
@@ -47,9 +49,11 @@ class Portfolio(QWidget):
         self.setLayout(self.settings_layout)
         
     def controller(self):
+        """Connect signals to their respective slots"""
         self.save_button.clicked.connect(self.save_investment)
 
     def save_investment(self):
+        """Validate input and save the investment data"""
         self.warning.setText("")
         is_ok = True
 
@@ -106,9 +110,11 @@ class Portfolio(QWidget):
             self.investment_saved.emit(self.investment)
     
     def error_message(self, text):
+        """Display an error message"""
         self.message.setText("Error : " + text)
         self.message.setStyleSheet("color : red")
 
     def warning_message(self, text):
+        """Display a warning message"""
         self.warning.setText("Warning : " + text)
         self.warning.setStyleSheet("color : orange")
