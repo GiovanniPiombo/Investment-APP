@@ -72,10 +72,9 @@ class Investment(QWidget):
             return None
 
         # Get rate from TickerAnalyzer
-        rate = TickerAnalyzer.get_rate(self.ticker.text())
-        
-        if rate is None:
-            # The error message is already set by TickerAnalyzer
+        try:
+            rate = TickerAnalyzer.get_rate(self.ticker.text())
+        except Exception:
             self.error_message.setText("Failed to get rate for this ticker. Please check the symbol and try again.")
             return None
 
