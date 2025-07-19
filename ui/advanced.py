@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QPushButton, QComboBox, QScrollArea
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QTimer
 from ui.investment import Investment
 
 class Advanced(QWidget):
@@ -10,6 +10,11 @@ class Advanced(QWidget):
         super().__init__()
         self.setup()
         self.controller()
+        
+        # Timer to periodically check if all analyses are complete
+        self.validation_timer = QTimer()
+        self.validation_timer.setSingleShot(True)
+        self.validation_timer.timeout.connect(self._check_analysis_status)
         
     def setup(self):
         """Set up the UI components for the Advanced settings"""
@@ -82,6 +87,24 @@ class Advanced(QWidget):
         widget.deleteLater()
         self.show_message("Investment removed successfully!")
 
+    def _check_analysis_status(self):
+        """Check if all ticker analyses are complete"""
+        analyzing_tickers = []
+        
+        for i in range(self.scroll_layout.count()):
+            widget = self.scroll_layout.itemAt(i).widget()
+            if isinstance(widget, Investment):
+                if widget.is_analyzing:
+                    analyzing_tickers.append(widget.ticker.text().strip().upper())
+        
+        if analyzing_tickers:
+            self.show_message(f"Still analyzing: {', '.join(analyzing_tickers)}. Please wait...", is_error=True)
+            # Check again in 2 seconds
+            self.validation_timer.start(2000)
+        else:
+            # All analyses complete, try to save again
+            self._perform_save()
+
     def get_investments_data(self):
         """Collect and validate investment data from the widgets"""
         self.show_message("")  # Clear previous messages
@@ -104,6 +127,19 @@ class Advanced(QWidget):
             self.show_message("Please add at least one investment", is_error=True)
             return None
 
+        # Check if any analyses are still running
+        analyzing_count = 0
+        for i in range(self.scroll_layout.count()):
+            widget = self.scroll_layout.itemAt(i).widget()
+            if isinstance(widget, Investment) and widget.is_analyzing:
+                analyzing_count += 1
+
+        if analyzing_count > 0:
+            self.show_message(f"{analyzing_count} ticker analysis(es) still in progress...", is_error=True)
+            # Start timer to check status periodically
+            self.validation_timer.start(2000)
+            return "ANALYZING"  # Special return value
+
         # Collect and validate all investments
         investments_data = []
         for i in range(self.scroll_layout.count()):
@@ -120,9 +156,22 @@ class Advanced(QWidget):
     def save_investments(self):
         """Save the investments data and emit the signal"""
         result = self.get_investments_data()
+        
         if result is None:
             return
+        elif result == "ANALYZING":
+            # Analyses are still running, timer will handle retry
+            return
             
+        self._perform_save(result)
+
+    def _perform_save(self, result=None):
+        """Perform the actual save operation"""
+        if result is None:
+            result = self.get_investments_data()
+            if result is None or result == "ANALYZING":
+                return
+        
         investments_data, years = result
         
         total_initial_deposit = 0.0
@@ -188,3 +237,19 @@ class Advanced(QWidget):
         
         self.investment_saved.emit(result)
         self.show_message("Investments saved successfully!")
+
+    def cleanup(self):
+        """Clean up all resources when widget is closed"""
+        self.validation_timer.stop()
+        
+        # Clean up all investment widgets
+        for i in range(self.scroll_layout.count()):
+            widget = self.scroll_layout.itemAt(i).widget()
+            if isinstance(widget, Investment):
+                if hasattr(widget, '_cleanup_and_remove'):
+                    widget.thread_manager.cancel_all()
+
+    def __del__(self):
+        """Cleanup when widget is destroyed"""
+        if hasattr(self, 'validation_timer'):
+            self.validation_timer.stop()
