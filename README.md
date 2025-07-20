@@ -49,27 +49,31 @@
 ```
 project/
 ├── assets/
-│   ├── white.qss                 # Light theme stylesheet
-│   ├── dark.qss                  # Dark theme stylesheet
-│   └── icon.ico                  # App icon
+│   ├── white.qss                     # Light theme stylesheet
+│   ├── dark.qss                      # Dark theme stylesheet
+│   └── icon.ico                      # App icon
 ├── core/
-│   ├── ticker_analyzer.py        # Ticker CAGR logic
-│   └── finance.py                # Core financial calculations
+│   ├── ticker_analyzer.py            # Ticker CAGR logic
+│   ├── investment_calculator.py      # Investment portfolio aggregation and weighted calculations
+│   ├── finance.py                    # Core financial calculations
+│   └── ticker_thread.py              # Asynchronous ticker analysis with threading
 ├── ui/
-│   ├── chart.py                  # Investment growth chart
-│   ├── homepage.py               # Summary display
-│   ├── main_window.py            # Main app window
-│   ├── portfolio.py              # Portfolio input page
-│   ├── advanced.py               # Advanced multi-ticker input
-│   ├── investment.py             # Investment input component
-│   └── settings.py               # Theme and settings page
+│   ├── chart.py                      # Investment growth chart
+│   ├── homepage.py                   # Summary display
+│   ├── main_window.py                # Main app window
+│   ├── portfolio.py                  # Portfolio input page
+│   ├── advanced.py                   # Advanced multi-ticker input
+│   ├── investment.py                 # Investment input component
+│   └── settings.py                   # Theme and settings page
 ├── tests/
-│   ├── test_finance.py           # Finance Test
-│   └── test_ticker_analyzer.py   # Ticker Analyzer Test
-├── main.py                       # App entry point
-├── README.md                     # This file
-├── requirements.txt              # Dependencies
-└── InvestmentApp.spec            # PyInstaller build config
+│   ├── conftest.py                   # Test configs
+│   ├── test_finance.py               # Finance Test
+│   ├── test_ticker_analyzer.py       # Ticker Analyzer Test
+│   └── test_investment_calculator.py # Investment calculator comprehensive tests
+├── main.py                           # App entry point
+├── README.md                         # This file
+├── requirements.txt                  # Dependencies
+└── InvestmentApp.spec                # PyInstaller build config
 ```
 
 ---
