@@ -1,7 +1,8 @@
-from PySide6.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QPushButton, QComboBox, QScrollArea
+from PySide6.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QPushButton, QComboBox, QScrollArea, QHBoxLayout, QMessageBox
 from PySide6.QtCore import Signal, QTimer
 from ui.investment import Investment
 from core.investment_calculator import InvestmentCalculator
+from core.investment_file_manager import InvestmentFileManager
 
 
 class Advanced(QWidget):
@@ -11,6 +12,7 @@ class Advanced(QWidget):
         """Initialize the Advanced settings widget"""
         super().__init__()
         self.calculator = InvestmentCalculator()
+        self.file_manager = InvestmentFileManager()
         self.setup()
         self.controller()
         
@@ -78,16 +80,43 @@ class Advanced(QWidget):
 
     def _setup_buttons(self):
         """Set up action buttons"""
+        # First row of buttons
+        button_row1 = QHBoxLayout()
+        
         self.addinvestment_button = QPushButton("Add Investment")
-        self.main_layout.addWidget(self.addinvestment_button)
-
-        self.save_button = QPushButton("Save Investments")
+        button_row1.addWidget(self.addinvestment_button)
+        
+        self.clear_all_button = QPushButton("Clear All")
+        button_row1.addWidget(self.clear_all_button)
+        
+        self.main_layout.addLayout(button_row1)
+        
+        # Second row of buttons for file operations
+        button_row2 = QHBoxLayout()
+        
+        self.save_to_file_button = QPushButton("Save to File")
+        button_row2.addWidget(self.save_to_file_button)
+        
+        self.load_from_file_button = QPushButton("Load from File")
+        button_row2.addWidget(self.load_from_file_button)
+        
+        self.export_csv_button = QPushButton("Export CSV")
+        button_row2.addWidget(self.export_csv_button)
+        
+        self.main_layout.addLayout(button_row2)
+        
+        # Main calculation button
+        self.save_button = QPushButton("Calculate Investments")
         self.main_layout.addWidget(self.save_button)
 
     def controller(self):
         """Connect signals to their respective slots"""
         self.addinvestment_button.clicked.connect(self.add)
         self.save_button.clicked.connect(self.save_investments)
+        self.clear_all_button.clicked.connect(self.clear_all_investments)
+        self.save_to_file_button.clicked.connect(self.save_to_file)
+        self.load_from_file_button.clicked.connect(self.load_from_file)
+        self.export_csv_button.clicked.connect(self.export_to_csv)
 
     def show_message(self, text, is_error=False):
         """Show a message with appropriate styling"""
@@ -109,6 +138,142 @@ class Advanced(QWidget):
         widget.setParent(None)
         widget.deleteLater()
         self.show_message("Investment removed successfully!")
+
+    def clear_all_investments(self):
+        """Remove all investment widgets"""
+        reply = QMessageBox.question(
+            self, 
+            "Clear All Investments",
+            "Are you sure you want to remove all investments?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No
+        )
+        
+        if reply == QMessageBox.StandardButton.Yes:
+            # Get all investment widgets
+            widgets = self._collect_investment_widgets()
+            
+            # Clean up and remove each widget
+            for widget in widgets:
+                if hasattr(widget, 'thread_manager'):
+                    widget.thread_manager.cancel_all()
+                self.scroll_layout.removeWidget(widget)
+                widget.setParent(None)
+                widget.deleteLater()
+                
+            self.show_message("All investments cleared!")
+
+    def save_to_file(self):
+        """Save current investments to a file"""
+        result = self.get_investments_data()
+        
+        if result is None:
+            return
+        elif result == "ANALYZING":
+            self.show_message("Please wait for all ticker analyses to complete before saving.", is_error=True)
+            return
+            
+        investments_data, years = result
+        
+        # Save to file using file manager
+        success = self.file_manager.save_investments_to_file(
+            self,
+            investments_data,
+            years,
+            self.frequency.currentText(),
+            self.contribution_frequency.currentText()
+        )
+        
+        if success:
+            self.show_message("Investments saved to file successfully!")
+
+    def load_from_file(self):
+        """Load investments from a file"""
+        # Ask user if they want to clear existing investments
+        if self.scroll_layout.count() > 0:
+            reply = QMessageBox.question(
+                self,
+                "Load Investments",
+                "Loading will replace current investments. Continue?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No
+            )
+            
+            if reply != QMessageBox.StandardButton.Yes:
+                return
+        
+        # Load data from file
+        loaded_data = self.file_manager.load_investments_from_file(self)
+        
+        if loaded_data is None:
+            return
+            
+        try:
+            # Clear existing investments
+            self.clear_all_investments()
+            
+            # Load metadata
+            metadata = loaded_data['metadata']
+            self.years.setText(str(metadata['years']))
+            
+            # Set frequencies
+            compound_freq = metadata['compound_frequency']
+            contrib_freq = metadata['contribution_frequency']
+            
+            # Find and set the frequency indices
+            compound_index = self.frequency.findText(compound_freq)
+            if compound_index >= 0:
+                self.frequency.setCurrentIndex(compound_index)
+                
+            contrib_index = self.contribution_frequency.findText(contrib_freq)
+            if contrib_index >= 0:
+                self.contribution_frequency.setCurrentIndex(contrib_index)
+            
+            # Load investments
+            for inv_data in loaded_data['investments']:
+                investment = Investment(remove_callback=self.remove_investment)
+                
+                # Populate the investment widget
+                investment.ticker.setText(inv_data['ticker'])
+                investment.initial_deposit.setText(str(inv_data['initial_deposit']))
+                investment.contribution.setText(str(inv_data['contribution_amount']))
+                
+                # Set the rate if available (this will skip analysis)
+                if 'rate' in inv_data:
+                    investment.current_rate = inv_data['rate']
+                    investment.status_label.setText(f"✓ {inv_data['ticker']}: {inv_data['rate']:.2f}% annual return")
+                    investment.status_label.setStyleSheet("color: green; font-style: italic;")
+                
+                self.scroll_layout.addWidget(investment)
+                
+            self.show_message(f"Successfully loaded {len(loaded_data['investments'])} investments!")
+            
+        except Exception as e:
+            self.show_message(f"Error loading investments: {str(e)}", is_error=True)
+
+    def export_to_csv(self):
+        """Export current investments to CSV"""
+        result = self.get_investments_data()
+        
+        if result is None:
+            return
+        elif result == "ANALYZING":
+            self.show_message("Please wait for all ticker analyses to complete before exporting.", is_error=True)
+            return
+            
+        investments_data, years = result
+        
+        # Export using file manager
+        success = self.file_manager.export_to_csv(
+            self,
+            investments_data,
+            years,
+            self.frequency.currentText(),
+            self.contribution_frequency.currentText()
+        )
+        
+        if success:
+            self.show_message("Data exported to CSV successfully!")
 
     def _get_analyzing_tickers(self):
         """Get list of tickers that are currently being analyzed"""
@@ -243,7 +408,7 @@ class Advanced(QWidget):
             
             # Emit the result
             self.investment_saved.emit(processed_result)
-            self.show_message("Investments saved successfully!")
+            self.show_message("Investments calculated successfully!")
             
         except ValueError as e:
             self.show_message(str(e), is_error=True)
