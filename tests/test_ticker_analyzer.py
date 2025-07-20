@@ -2,11 +2,7 @@ import pytest
 from unittest.mock import patch
 import pandas as pd
 from datetime import datetime
-import sys
-import os
 from urllib.error import URLError
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.ticker_analyzer import TickerAnalyzer
 
 @pytest.fixture
